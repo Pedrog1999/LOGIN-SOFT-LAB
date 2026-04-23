@@ -274,7 +274,7 @@
 /* ── Mobile responsive video ── */
 @media (max-width: 768px) {
   .bg-video {
-    object-fit: contain;
+    object-fit: cover;
     background: #080705;
   }
 
