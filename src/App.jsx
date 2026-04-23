@@ -2,9 +2,12 @@ import React, { useRef, useState, useEffect } from 'react'
 import LoginForm from './components/LoginForm'
 import IntroScreen from './components/IntroScreen'
 import introVideo from './assets/intro.mp4'
+import introMobile from './assets/intromobile.mp4'
 import ambientAudio from './assets/ambient.mp3'
 
 const TRIGGER_TIME = 5.0
+
+const isMobile = () => window.innerWidth <= 768
 
 export default function App() {
   const videoRef = useRef(null)
@@ -15,6 +18,12 @@ export default function App() {
   const [started, setStarted] = useState(false)
   const [loginVisible, setLoginVisible] = useState(false)
   const [videoBlurred, setVideoBlurred] = useState(false)
+  const [videoSrc, setVideoSrc] = useState('')
+
+  // Detectar mobile al montar
+  useEffect(() => {
+    setVideoSrc(isMobile() ? introMobile : introVideo)
+  }, [])
 
   const fadeVolume = (el, from, to, durationMs) => {
     const steps = 60
@@ -39,9 +48,9 @@ export default function App() {
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || !videoSrc) return
     video.load()
-  }, [])
+  }, [videoSrc])
 
   const handleEnter = () => {
     setStarted(true)
@@ -88,7 +97,7 @@ export default function App() {
       <video
         ref={videoRef}
         className={`bg-video ${videoBlurred ? 'blurred' : ''}`}
-        src={introVideo}
+        src={videoSrc}
         playsInline
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
