@@ -1,0 +1,267 @@
+/* ═══════════════════════════════════════════════════════════════════
+   CAROUSEL COMPLETO — Glassmorphism para TODOS los slides
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Videos crossfade ────────────────────────────────────────────── */
+.vid-active {
+  opacity: 1 !important;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.vid-inactive {
+  opacity: 0 !important;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+/* ─── Scene overlay (oscurece fondo) ─────────────────────────────── */
+.scene-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ─── SLIDE WRAPPER (centrado perfecto) ──────────────────────────── */
+.slide-wrapper {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+  pointer-events: none;
+}
+
+.slide-wrapper * {
+  pointer-events: auto;
+}
+
+/* ─── SLIDE CARD GLASSMORPHISM (TODOS los slides) ────────────────── */
+.slide-card {
+  width: 100%;
+  max-width: 520px;
+  min-height: 420px;
+  padding: 64px 52px 52px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.12),
+    0 48px 96px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(201, 168, 76, 0.18);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ─── Slide content ──────────────────────────────────────────────── */
+.slide-title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.slide-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 200;
+  letter-spacing: 0.35em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.slide-body {
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 440px;
+  opacity: 0.92;
+  letter-spacing: 0.015em;
+}
+
+/* ─── Slide transitions ──────────────────────────────────────────── */
+.slide-wrapper.slide-exit-left .slide-card {
+  opacity: 0 !important;
+  transform: translateX(-120px) scale(0.92) !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+.slide-wrapper.slide-exit-right .slide-card {
+  opacity: 0 !important;
+  transform: translateX(120px) scale(0.92) !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+/* ─── LOGIN OVERLAY (encima de slide 0) ─────────────────────────── */
+.login-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 15 !important; /* Sobre slide-card */
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLECHAS CAROUSEL
+   ═══════════════════════════════════════════════════════════════════ */
+
+.arrow-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px 24px;
+  opacity: 0;
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--gold-dim);
+}
+
+.arrow-btn--visible  { opacity: 1; }
+.arrow-btn--left     { left: 32px; }
+.arrow-btn--right    { right: 32px; }
+.arrow-btn--disabled { 
+  opacity: 0.2 !important; 
+  cursor: default !important; 
+}
+
+.arrow-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: gap 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel-arrow-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: var(--gold);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--gold-border);
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.1),
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(201, 168, 76, 0.15);
+}
+
+.arrow-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease, letter-spacing 0.4s ease;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow-btn:not(.arrow-btn--disabled):hover .carousel-arrow-icon {
+  color: var(--gold-light);
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.25),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(201, 168, 76, 0.15),
+    inset 0 1px 0 rgba(201, 168, 76, 0.25);
+}
+
+.arrow-btn:not(.arrow-btn--disabled):hover .arrow-label {
+  opacity: 1;
+  letter-spacing: 0.32em;
+}
+
+.arrow-btn:not(.arrow-btn--disabled):hover .arrow-inner { gap: 22px; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FILMSTRIP
+   ═══════════════════════════════════════════════════════════════════ */
+
+.filmstrip {
+  position: fixed;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.filmstrip-bar {
+  height: 1px;
+  width: 24px;
+  background: var(--gold-dim);
+  border-radius: 1px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filmstrip-bar.active {
+  width: 52px;
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.4);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .slide-card {
+    margin: 0 24px;
+    padding: 48px 36px 44px;
+    max-width: 92vw;
+    min-height: 380px;
+  }
+  
+  .slide-title { font-size: 2rem; }
+  .slide-subtitle { font-size: 0.78rem; }
+  .slide-body { font-size: 0.98rem; max-width: 360px; }
+  
+  .arrow-btn { padding: 16px 20px; }
+  .arrow-btn--left { left: 16px; }
+  .arrow-btn--right { right: 16px; }
+  .carousel-arrow-icon { width: 34px; height: 34px; padding: 8px; }
+  
+  .filmstrip { bottom: 32px; gap: 10px; }
+  .filmstrip-bar { width: 20px; }
+  .filmstrip-bar.active { width: 44px; }
+}

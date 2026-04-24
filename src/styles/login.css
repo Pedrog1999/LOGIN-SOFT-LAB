@@ -1,61 +1,40 @@
-/* ── Escena ── */
-.scene {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
+/* ═══════════════════════════════════════════════════════════════════
+   LOGIN - ESTILOS COMPLETOS (SOBREESCRIBE carousel.css)
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Video de fondo ── */
+/* ── Video de fondo (¡IMPORTANTE! sobreescribe carousel.css) ── */
 .bg-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: 0 !important;
   transition:
     filter 2.5s cubic-bezier(0.16, 1, 0.3, 1),
-    brightness 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .bg-video.blurred {
-  filter: blur(10px) brightness(0.55);
+  filter: blur(10px) brightness(0.55) !important;
 }
 
-/* ── Overlay sutil siempre presente ── */
-.scene-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.05) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
+.bg-video.vid-active {
+  opacity: 1 !important;
 }
 
-/* ── Wrapper del login ── */
+.bg-video.vid-inactive {
+  opacity: 0 !important;
+}
+
+/* ── Login wrapper (GSAP controla todo) ── */
 .login-wrapper {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-
-  /* Empieza fuera de pantalla arriba */
-  transform: translateY(-110vh);
-  opacity: 0;
-  transition:
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.6s ease;
-}
-
-.login-wrapper.visible {
-  transform: translateY(0);
-  opacity: 1;
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
 }
 
 /* ── Card glassmorphism ── */
@@ -76,7 +55,6 @@
   overflow: hidden;
 }
 
-/* línea decorativa dorada superior */
 .login-card::before {
   content: '';
   position: absolute;
@@ -84,12 +62,7 @@
   left: 10%;
   width: 80%;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--gold),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 /* ── Encabezado ── */
@@ -118,7 +91,6 @@
   text-transform: uppercase;
 }
 
-/* ── Separador dorado ── */
 .login-divider {
   width: 40px;
   height: 1px;
@@ -153,8 +125,9 @@
   font-weight: 300;
   color: var(--text-primary);
   outline: none;
-  transition: border-color var(--transition-mid), background var(--transition-mid);
+  transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: 0.05em;
+  box-sizing: border-box;
 }
 
 .form-group input::placeholder {
@@ -165,9 +138,10 @@
 .form-group input:focus {
   border-color: var(--gold);
   background: rgba(201, 168, 76, 0.06);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
 }
 
-/* ── Fila recordarme / olvidé ── */
+/* ── Checkbox custom ── */
 .form-row {
   display: flex;
   align-items: center;
@@ -198,7 +172,7 @@
   cursor: pointer;
   position: relative;
   flex-shrink: 0;
-  transition: background var(--transition-mid), border-color var(--transition-mid);
+  transition: all 0.3s ease;
 }
 
 .remember-label input[type="checkbox"]:checked {
@@ -225,19 +199,15 @@
   letter-spacing: 0.1em;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color var(--transition-mid);
+  transition: color 0.3s ease;
   cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: var(--font-body);
 }
 
 .forgot-link:hover {
   color: var(--gold-light);
 }
 
-/* ── Botón outline ── */
+/* ── Botón ── */
 .btn-login {
   width: 100%;
   padding: 13px;
@@ -251,13 +221,10 @@
   text-transform: uppercase;
   color: var(--gold-light);
   cursor: pointer;
-  transition:
-    background var(--transition-mid),
-    border-color var(--transition-mid),
-    color var(--transition-mid),
-    box-shadow var(--transition-mid);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .btn-login:hover {
@@ -269,17 +236,50 @@
 
 .btn-login:active {
   background: rgba(201, 168, 76, 0.18);
+  transform: translateY(1px);
 }
 
-/* ── Mobile responsive video ── */
+/* ── Mobile ── */
 @media (max-width: 768px) {
-  .bg-video {
-    object-fit: cover;
-    background: #080705;
-  }
-
   .login-card {
     margin: 0 16px;
     padding: 36px 24px 32px;
   }
+  
+  .login-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.25em;
+  }
+}
+/* ── FIX RECUPERAR CONTRASEÑA ── */
+.forgot-link, 
+.forgot-link * {
+  color: var(--text-secondary) !important;
+  background: none !important;
+  border: none !important;
+  font-family: var(--font-body) !important;
+}
+
+.forgot-link:hover {
+  color: var(--gold-light) !important;
+}
+/* ── Login overlay (cuando es slide 0) ── */
+.login-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 15 !important; /* Sobre slide-card */
+  pointer-events: auto;
+}
+/* ── Login overlay (para slide 0) ── */
+.login-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 15 !important;
+  pointer-events: auto;
 }
