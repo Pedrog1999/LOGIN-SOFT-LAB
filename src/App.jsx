@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
-import LoginForm from './components/LoginForm'
-import IntroScreen from './components/IntroScreen'
-import SlideCard from './components/SlideCard'
+import LoginForm    from './components/LoginForm'
+import IntroScreen  from './components/IntroScreen'
+import SlideCard    from './components/SlideCard'
 import CarouselArrows from './components/CarouselArrows'
 
 import introVideo   from './assets/intro.mp4'
@@ -13,16 +13,17 @@ import video3 from './assets/video3.mp4'
 import video4 from './assets/video4.mp4'
 import video5 from './assets/video5.mp4'
 
-// ─── TIMINGS ──────────────────────────────
-const TRIGGER_TIME = 5.0    // 🎵 DROP + TODO en seg 5
-const VIDEO_DURATION = 8000 // 8s cada video
+// ─── TIMINGS ──────────────────────────────────────────────────────────────────
+const TRIGGER_TIME   = 5.0    // seg en que cae todo (drop + carousel)
+const VIDEO_DURATION = 8000   // 8s por video en queue
 
 const BG_QUEUE = [video2, video3, video4, video5]
-
 const isMobile = () => window.innerWidth <= 768
 
+// ─── SLIDES ────────────────────────────────────────────────────────────────────
+// slide 0 es login — siempre el punto de partida
 export const SLIDES = [
-  { id: 0, isLogin: true }, // ← SLIDE 0 = LOGIN (¡SIEMPRE visible como slide!)
+  { id: 0, isLogin: true },
   {
     id: 1,
     title: 'Quiénes Somos',
@@ -50,29 +51,29 @@ export const SLIDES = [
 ]
 
 export default function App() {
-  const videoARef       = useRef(null)
-  const videoBRef       = useRef(null)
-  const audioRef        = useRef(null)
-  const hasTriggered    = useRef(false)
-  const fadeRefs        = useRef([])
-  const activeVideo     = useRef('A')
-  const queueIndex      = useRef(0)
-  const queueTimer      = useRef(null)
-  const queueRunning    = useRef(false)
+  const videoARef    = useRef(null)
+  const videoBRef    = useRef(null)
+  const audioRef     = useRef(null)
+  const hasTriggered = useRef(false)
+  const fadeRefs     = useRef([])
+  const activeVideo  = useRef('A')
+  const queueIndex   = useRef(0)
+  const queueTimer   = useRef(null)
+  const queueRunning = useRef(false)
 
-  const [started,          setStarted]          = useState(false)
-  const [videoBlurred,     setVideoBlurred]     = useState(false)
-  const [videoSrc,         setVideoSrc]         = useState('')
-  const [arrowsVisible,    setArrowsVisible]    = useState(false)
-  const [currentSlide,     setCurrentSlide]     = useState(0) // ← SIEMPRE empieza en 0 (login)
-  const [slideDirection,   setSlideDirection]   = useState(null)
-  const [isTransitioning,  setIsTransitioning]  = useState(false)
-  const [activeEl,         setActiveEl]         = useState('A')
-  const [showCarousel,     setShowCarousel]     = useState(false) // ← YA en seg 5
+  const [started,         setStarted]         = useState(false)
+  const [videoBlurred,    setVideoBlurred]     = useState(false)
+  const [videoSrc,        setVideoSrc]         = useState('')
+  const [activeEl,        setActiveEl]         = useState('A')
+
+  // ── Carousel ──────────────────────────────────────────────────────────────
+  const [showCarousel,    setShowCarousel]     = useState(false)
+  const [currentSlide,    setCurrentSlide]     = useState(0)
+  const [isTransitioning, setIsTransitioning]  = useState(false)
+  const [slideDirection,  setSlideDirection]   = useState(null) // 'left' | 'right' | null
 
   useEffect(() => {
-    const src = isMobile() ? introMobile : introVideo
-    setVideoSrc(src)
+    setVideoSrc(isMobile() ? introMobile : introVideo)
   }, [])
 
   // ─── Fade de volumen ────────────────────────────────────────────────────────
@@ -100,22 +101,20 @@ export default function App() {
     if (videoARef.current && videoSrc) videoARef.current.load()
   }, [videoSrc])
 
-  // ─── Crossfade videos ───────────────────────────────────────────────────────
+  // ─── Crossfade de videos ────────────────────────────────────────────────────
   const crossfadeToSrc = useCallback((newSrc) => {
     if (!newSrc) return
     const isA      = activeVideo.current === 'A'
     const incoming = isA ? videoBRef.current : videoARef.current
     if (!incoming) return
-
     incoming.src = newSrc
     incoming.load()
     incoming.play().catch(() => {})
-
     activeVideo.current = isA ? 'B' : 'A'
     setActiveEl(activeVideo.current)
   }, [])
 
-  // ─── Video queue (video2 en seg 8) ──────────────────────────────────────────
+  // ─── Video queue ────────────────────────────────────────────────────────────
   const playNextInQueue = useCallback(() => {
     const src = BG_QUEUE[queueIndex.current % BG_QUEUE.length]
     crossfadeToSrc(src)
@@ -125,7 +124,7 @@ export default function App() {
   const startVideoQueue = useCallback(() => {
     if (queueRunning.current) return
     queueRunning.current = true
-    playNextInQueue() // ← video2 YA
+    playNextInQueue()
     queueTimer.current = setInterval(playNextInQueue, VIDEO_DURATION)
   }, [playNextInQueue])
 
@@ -134,7 +133,9 @@ export default function App() {
     queueRunning.current = false
   }, [])
 
-  // ─── Intro ──────────────────────────────────────────────────────────────────
+  useEffect(() => () => stopVideoQueue(), [stopVideoQueue])
+
+  // ─── Intro enter ────────────────────────────────────────────────────────────
   const handleEnter = () => {
     setStarted(true)
     const video = videoARef.current
@@ -154,7 +155,7 @@ export default function App() {
     }
   }
 
-  // ✅ TRIGGER SECUENCIA PRINCIPAL (seg 5)
+  // ─── Trigger en seg 5 ───────────────────────────────────────────────────────
   const handleTimeUpdate = () => {
     if (hasTriggered.current) return
     const t = videoARef.current?.currentTime ?? 0
@@ -168,92 +169,106 @@ export default function App() {
     clearAllFades()
     const video = videoARef.current
     const audio = audioRef.current
-    
-    // 🎵 DROP MUSICAL
+
+    // 🎵 Drop musical
     if (video) fadeVolume(video, video.volume, 0.12, 600)
     if (audio) fadeVolume(audio, audio.volume, 0.65, 800)
 
-    // ✅ TODO DESDE SEG 5:
-    setVideoBlurred(true)      // Blur YA
-    setShowCarousel(true)      // ← Carousel YA (incluye slide 0=login)
-    setArrowsVisible(true)     // ← Flechas YA
-    startVideoQueue()          // ← Video2 YA (seg 8)
+    // ✅ Todo de golpe en seg 5
+    setVideoBlurred(true)
+    setShowCarousel(true)   // activa carousel — LoginForm ve visible=true y dispara GSAP
+    startVideoQueue()
   }
 
-  useEffect(() => () => stopVideoQueue(), [stopVideoQueue])
-
-  // ─── Navegación CIRCULAR (0 ↔ 1 ↔ 2 ↔ 3 ↔ 4 ↔ 0) ───────────────────────────
-  const navigateTo = (direction) => {
+  // ─── Navegación circular ────────────────────────────────────────────────────
+  // direction: 'left' | 'right'
+  // right → avanza (slide +1), left → retrocede (slide -1)
+  const navigateTo = useCallback((direction) => {
     if (isTransitioning || !showCarousel) return
-    
+
     const total = SLIDES.length
-    const nextSlide = direction === 'right'
-      ? (currentSlide + 1) % total      // 4 → 0 (login)
-      : (currentSlide - 1 + total) % total // 0 → 4
+    const next  = direction === 'right'
+      ? (currentSlide + 1) % total
+      : (currentSlide - 1 + total) % total
 
     setIsTransitioning(true)
-    setSlideDirection(direction)
+    setSlideDirection(direction)   // le dice al slide actual en qué dirección salir
 
+    // Cambia el slide cuando termina la salida (~350ms)
     setTimeout(() => {
-      setCurrentSlide(nextSlide)
-      setSlideDirection(null)
+      setCurrentSlide(next)
+      setSlideDirection(null)      // nueva card entra desde el lado opuesto
     }, 350)
 
+    // Libera el lock cuando termina la entrada (~700ms total)
     setTimeout(() => setIsTransitioning(false), 700)
-  }
+  }, [isTransitioning, showCarousel, currentSlide])
+
+  const currentSlideData = SLIDES[currentSlide]
 
   return (
     <div className="scene">
-      {/* Videos */}
-      <video 
-        ref={videoARef} 
-        className={`bg-video ${videoBlurred ? 'blurred' : ''} ${activeEl === 'A' ? 'vid-active' : 'vid-inactive'}`} 
-        src={videoSrc} 
-        playsInline 
-        preload="auto" 
-        loop 
+
+      {/* ── Videos background ── */}
+      <video
+        ref={videoARef}
+        className={`bg-video ${videoBlurred ? 'blurred' : ''} ${activeEl === 'A' ? 'vid-active' : 'vid-inactive'}`}
+        src={videoSrc}
+        playsInline
+        preload="auto"
+        loop
         onTimeUpdate={handleTimeUpdate}
       />
-      <video 
-        ref={videoBRef} 
-        className={`bg-video ${videoBlurred ? 'blurred' : ''} ${activeEl === 'B' ? 'vid-active' : 'vid-inactive'}`} 
-        playsInline 
-        preload="auto" 
-        loop 
+      <video
+        ref={videoBRef}
+        className={`bg-video ${videoBlurred ? 'blurred' : ''} ${activeEl === 'B' ? 'vid-active' : 'vid-inactive'}`}
+        playsInline
+        preload="auto"
+        loop
       />
 
       <audio ref={audioRef} src={ambientAudio} loop preload="auto" />
       <div className="scene-overlay" />
 
-      {/* 🔥 CAROUSEL - INCLUYE LOGIN COMO SLIDE 0 */}
+      {/* ── Carousel: LoginForm o SlideCard ── */}
       {showCarousel && (
-        <div className={`slide-wrapper ${isTransitioning ? `slide-exit-${slideDirection}` : ''}`}>
-          <SlideCard 
-            slide={SLIDES[currentSlide]} 
-            exiting={isTransitioning}
-            exitDirection={slideDirection}
+        <>
+          {currentSlideData.isLogin ? (
+            /*
+             * visible=true dispara la animación GSAP de caída en LoginForm.
+             * exiting / exitDirection controlan la salida lateral.
+             */
+            <LoginForm
+              visible={showCarousel}
+              exiting={isTransitioning}
+              exitDirection={slideDirection}
+            />
+          ) : (
+            /*
+             * key={currentSlide} → fuerza desmount/mount en cada cambio,
+             * así GSAP siempre corre la entrada desde cero.
+             * enterFrom → desde qué lado entra el nuevo slide.
+             */
+            <SlideCard
+              key={currentSlide}
+              slide={currentSlideData}
+              exiting={isTransitioning}
+              exitDirection={slideDirection}
+              enterFrom={slideDirection}
+            />
+          )}
+
+          <CarouselArrows
+            onLeft={()  => navigateTo('left')}
+            onRight={() => navigateTo('right')}
+            currentSlide={currentSlide}
+            totalSlides={SLIDES.length}
+            disabled={isTransitioning}
           />
-        </div>
+        </>
       )}
 
-      {/* 🔥 LOGIN - SOLO renderiza cuando es slide 0 */}
-      {showCarousel && SLIDES[currentSlide].isLogin && (
-        <div className="login-overlay">
-          <LoginForm />
-        </div>
-      )}
-
-      {/* 🔥 FLECHAS - SIEMPRE con carousel */}
-      {arrowsVisible && showCarousel && (
-        <CarouselArrows
-          onLeft={() => navigateTo('left')}
-          onRight={() => navigateTo('right')}
-          currentSlide={currentSlide}
-          totalSlides={SLIDES.length}
-          disabled={isTransitioning}
-        />
-      )}
-
+      {/* ── Pantalla de intro (tapa todo hasta que hacen click) ── */}
       {!started && <IntroScreen onEnter={handleEnter} />}
     </div>
   )
