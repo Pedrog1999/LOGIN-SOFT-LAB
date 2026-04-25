@@ -1,19 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════
-   CAROUSEL COMPLETO — Glassmorphism para TODOS los slides
+   CAROUSEL — slides 1-4 + flechas + filmstrip
+   (los estilos de .bg-video y .login-* viven en login.css)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── Videos crossfade ────────────────────────────────────────────── */
-.vid-active {
-  opacity: 1 !important;
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-.vid-inactive {
-  opacity: 0 !important;
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  pointer-events: none !important;
-}
-
-/* ─── Scene overlay (oscurece fondo) ─────────────────────────────── */
+/* ─── Scene overlay ───────────────────────────────────────────────── */
 .scene-overlay {
   position: absolute;
   inset: 0;
@@ -22,14 +12,24 @@
   pointer-events: none;
 }
 
-/* ─── SLIDE WRAPPER (centrado perfecto) ──────────────────────────── */
+/* ─── Crossfade ────────────────────────────────────────────────────── */
+.vid-active  { opacity: 1 !important; }
+.vid-inactive {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SLIDE WRAPPER + CARD (slides 1-4)
+   ═══════════════════════════════════════════════════════════════════ */
+
 .slide-wrapper {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 10 !important;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -37,7 +37,7 @@
   pointer-events: auto;
 }
 
-/* ─── SLIDE CARD GLASSMORPHISM (TODOS los slides) ────────────────── */
+/* GSAP controla transform/opacity — sin transition CSS en estas props */
 .slide-card {
   width: 100%;
   max-width: 520px;
@@ -47,9 +47,9 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--gold-border);
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow:
-    0 0 0 1px rgba(201, 168, 76, 0.12),
+    0 0 0 1px rgba(201, 168, 76, 0.08),
     0 48px 96px rgba(0, 0, 0, 0.75),
     inset 0 1px 0 rgba(201, 168, 76, 0.18);
   position: relative;
@@ -58,20 +58,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
 }
 
 .slide-card::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 15%;
-  width: 70%;
+  left: 10%;
+  width: 80%;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-/* ─── Slide content ──────────────────────────────────────────────── */
 .slide-title {
   font-family: var(--font-display);
   font-size: 2.4rem;
@@ -107,32 +106,8 @@
   letter-spacing: 0.015em;
 }
 
-/* ─── Slide transitions ──────────────────────────────────────────── */
-.slide-wrapper.slide-exit-left .slide-card {
-  opacity: 0 !important;
-  transform: translateX(-120px) scale(0.92) !important;
-  transition: all 0.35s cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.slide-wrapper.slide-exit-right .slide-card {
-  opacity: 0 !important;
-  transform: translateX(120px) scale(0.92) !important;
-  transition: all 0.35s cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-/* ─── LOGIN OVERLAY (encima de slide 0) ─────────────────────────── */
-.login-overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 15 !important; /* Sobre slide-card */
-  pointer-events: auto;
-}
-
 /* ═══════════════════════════════════════════════════════════════════
-   FLECHAS CAROUSEL
+   FLECHAS
    ═══════════════════════════════════════════════════════════════════ */
 
 .arrow-btn {
@@ -152,9 +127,10 @@
 .arrow-btn--visible  { opacity: 1; }
 .arrow-btn--left     { left: 32px; }
 .arrow-btn--right    { right: 32px; }
-.arrow-btn--disabled { 
-  opacity: 0.2 !important; 
-  cursor: default !important; 
+.arrow-btn--disabled {
+  opacity: 0.2 !important;
+  cursor: default !important;
+  pointer-events: none;
 }
 
 .arrow-inner {
@@ -251,16 +227,16 @@
     max-width: 92vw;
     min-height: 380px;
   }
-  
-  .slide-title { font-size: 2rem; }
+
+  .slide-title    { font-size: 2rem; }
   .slide-subtitle { font-size: 0.78rem; }
-  .slide-body { font-size: 0.98rem; max-width: 360px; }
-  
-  .arrow-btn { padding: 16px 20px; }
-  .arrow-btn--left { left: 16px; }
+  .slide-body     { font-size: 0.98rem; max-width: 360px; }
+
+  .arrow-btn        { padding: 16px 20px; }
+  .arrow-btn--left  { left: 16px; }
   .arrow-btn--right { right: 16px; }
   .carousel-arrow-icon { width: 34px; height: 34px; padding: 8px; }
-  
+
   .filmstrip { bottom: 32px; gap: 10px; }
   .filmstrip-bar { width: 20px; }
   .filmstrip-bar.active { width: 44px; }
