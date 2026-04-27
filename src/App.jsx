@@ -92,7 +92,7 @@ const crossfadeToSrc = useCallback((newSrc) => {
     // AQUÍ ESTÁ EL TRUCO: 
     // Forzamos el volumen bajo apenas carga, antes de darle play.
     // Usamos 0.06 que es el valor de "volumen bajito" que definimos.
-    incoming.volume = 0.25 
+    incoming.volume = 0.0 
     
     incoming.play().catch(() => {})
     
