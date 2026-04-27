@@ -1,243 +1,199 @@
-/* ═══════════════════════════════════════════════════════════════════
-   CAROUSEL — slides 1-4 + flechas + filmstrip
-   (los estilos de .bg-video y .login-* viven en login.css)
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* ─── Scene overlay ───────────────────────────────────────────────── */
-.scene-overlay {
+/* ── CAROUSEL CONTAINER ── */
+.carousel-container {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 5;
-  pointer-events: none;
+  z-index: 10;
 }
 
-/* ─── Crossfade ────────────────────────────────────────────────────── */
-.vid-active  { opacity: 1 !important; }
-.vid-inactive {
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   SLIDE WRAPPER + CARD (slides 1-4)
-   ═══════════════════════════════════════════════════════════════════ */
-
+/* ── SLIDE WRAPPER ── */
 .slide-wrapper {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  z-index: 10;
-  pointer-events: none;
 }
 
-.slide-wrapper * {
-  pointer-events: auto;
-}
-
-/* GSAP controla transform/opacity — sin transition CSS en estas props */
+/* ── SLIDE CARD ── */
 .slide-card {
-  width: 100%;
-  max-width: 520px;
-  min-height: 420px;
-  padding: 64px 52px 52px;
+  max-width: 500px;
+  padding: 48px 44px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--gold-border);
   border-radius: 4px;
-  box-shadow:
-    0 0 0 1px rgba(201, 168, 76, 0.08),
-    0 48px 96px rgba(0, 0, 0, 0.75),
-    inset 0 1px 0 rgba(201, 168, 76, 0.18);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  will-change: transform, opacity, filter;
-}
-
-.slide-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 10%;
-  width: 80%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  text-align: center;
+  opacity: 1;
+  transform: none;
 }
 
 .slide-title {
   font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 300;
-  letter-spacing: 0.08em;
-  color: var(--gold-light);
+  font-size: 2.2rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
   text-transform: uppercase;
-  line-height: 1.1;
-  margin-bottom: 16px;
-  text-align: center;
 }
 
 .slide-subtitle {
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 200;
-  letter-spacing: 0.35em;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 24px;
   text-transform: uppercase;
-  text-align: center;
-  margin-bottom: 40px;
+  color: var(--text-secondary);
 }
 
 .slide-body {
-  font-family: var(--font-body);
-  font-size: 1.02rem;
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--text-primary);
-  text-align: center;
-  max-width: 440px;
-  opacity: 0.92;
-  letter-spacing: 0.015em;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.95;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   FLECHAS
-   ═══════════════════════════════════════════════════════════════════ */
+/* ── LOGIN MOTION ── */
+.login-card-motion {
+  opacity: 1;
+  transform: none;
+}
 
+/* ── ARROWS ── */
 .arrow-btn {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 100;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 20px 24px;
-  opacity: 0;
-  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
-  color: var(--gold-dim);
+  color: rgba(201, 168, 76, 0.4);
+  padding: 20px 16px;
+  z-index: 20;
+  pointer-events: auto;
+  transition: color 0.4s ease;
 }
 
-.arrow-btn--visible  { opacity: 1; }
-.arrow-btn--left     { left: 32px; }
-.arrow-btn--right    { right: 32px; }
+.arrow-btn--left  { left: 32px; }
+.arrow-btn--right { right: 32px; }
+
+.arrow-btn:hover {
+  color: rgba(201, 168, 76, 0.9);
+}
+
 .arrow-btn--disabled {
-  opacity: 0.2 !important;
-  cursor: default !important;
+  opacity: 0.15;
   pointer-events: none;
 }
 
 .arrow-inner {
   display: flex;
   align-items: center;
-  gap: 16px;
-  transition: gap 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 14px;
 }
 
 .carousel-arrow-icon {
   width: 40px;
-  height: 40px;
+  height: 12px;
   flex-shrink: 0;
-  color: var(--gold);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--gold-border);
-  border-radius: 4px;
-  padding: 10px;
-  box-shadow:
-    0 0 0 1px rgba(201, 168, 76, 0.1),
-    0 12px 32px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(201, 168, 76, 0.15);
+  transition: transform 0.3s ease;
 }
+
+.arrow-btn--left:hover  .carousel-arrow-icon { transform: translateX(-4px); }
+.arrow-btn--right:hover .carousel-arrow-icon { transform: translateX(4px); }
 
 .arrow-label {
   font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 300;
-  letter-spacing: 0.25em;
+  font-size: 0.6rem;
+  font-weight: 200;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: rgba(240, 230, 204, 0.0);
   white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.4s ease, letter-spacing 0.4s ease;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: color 0.35s ease, letter-spacing 0.35s ease;
+  pointer-events: none;
 }
 
-.arrow-btn:not(.arrow-btn--disabled):hover .carousel-arrow-icon {
-  color: var(--gold-light);
-  transform: scale(1.1);
-  box-shadow:
-    0 0 0 1px rgba(201, 168, 76, 0.25),
-    0 16px 40px rgba(0, 0, 0, 0.6),
-    0 0 24px rgba(201, 168, 76, 0.15),
-    inset 0 1px 0 rgba(201, 168, 76, 0.25);
-}
-
-.arrow-btn:not(.arrow-btn--disabled):hover .arrow-label {
-  opacity: 1;
+.arrow-btn:hover .arrow-label {
+  color: rgba(240, 230, 204, 0.55);
   letter-spacing: 0.32em;
 }
 
-.arrow-btn:not(.arrow-btn--disabled):hover .arrow-inner { gap: 22px; }
-
-/* ═══════════════════════════════════════════════════════════════════
-   FILMSTRIP
-   ═══════════════════════════════════════════════════════════════════ */
-
+/* ── FILMSTRIP ── */
 .filmstrip {
   position: fixed;
-  bottom: 48px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  z-index: 20;
   align-items: center;
 }
 
 .filmstrip-bar {
+  width: 28px;
   height: 1px;
-  width: 24px;
-  background: var(--gold-dim);
+  background: rgba(240, 230, 204, 0.18);
   border-radius: 1px;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .filmstrip-bar.active {
-  width: 52px;
-  background: var(--gold);
-  box-shadow: 0 0 12px rgba(201, 168, 76, 0.4);
+  width: 42px;
+  height: 1px;
+  background: rgba(201, 168, 76, 0.75);
+  box-shadow: 0 0 6px rgba(201, 168, 76, 0.3);
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
-  .slide-card {
-    margin: 0 24px;
-    padding: 48px 36px 44px;
-    max-width: 92vw;
-    min-height: 380px;
-  }
+  .arrow-btn--left  { left: 12px; }
+  .arrow-btn--right { right: 12px; }
+  .arrow-label      { display: none; }
+  .carousel-arrow-icon { width: 28px; }
+}
 
-  .slide-title    { font-size: 2rem; }
-  .slide-subtitle { font-size: 0.78rem; }
-  .slide-body     { font-size: 0.98rem; max-width: 360px; }
+.carousel-arrow-icon {
+  width: 20px;
+  height: 20px;
+}
 
-  .arrow-btn        { padding: 16px 20px; }
-  .arrow-btn--left  { left: 16px; }
-  .arrow-btn--right { right: 16px; }
-  .carousel-arrow-icon { width: 34px; height: 34px; padding: 8px; }
+/* ── FILMSTRIP ── */
+.filmstrip {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 1001;
+}
 
-  .filmstrip { bottom: 32px; gap: 10px; }
-  .filmstrip-bar { width: 20px; }
-  .filmstrip-bar.active { width: 44px; }
+.filmstrip-bar {
+  width: 32px;
+  height: 2px;
+  background: rgba(240, 230, 204, 0.2);
+  border-radius: 1px;
+  transition: all 0.3s ease;
+}
+
+.filmstrip-bar.active {
+  background: var(--gold);
+  height: 3px;
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+}
+/* ── FIX: arrows visibility inicial ── */
+.arrow-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
+}
+
+.arrow-btn--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── FIX: z-index login sobre carousel container ── */
+.login-wrapper {
+  z-index: 15 !important;
 }

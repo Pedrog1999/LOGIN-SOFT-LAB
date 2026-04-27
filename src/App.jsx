@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
-import LoginForm    from './components/LoginForm'
-import IntroScreen  from './components/IntroScreen'
-import SlideCard    from './components/SlideCard'
+import LoginForm     from './components/LoginForm'
+import IntroScreen   from './components/IntroScreen'
+import SlideCard     from './components/SlideCard'
 import CarouselArrows from './components/CarouselArrows'
 
 import introVideo   from './assets/intro.mp4'
@@ -13,41 +13,18 @@ import video3 from './assets/video3.mp4'
 import video4 from './assets/video4.mp4'
 import video5 from './assets/video5.mp4'
 
-// ─── TIMINGS ──────────────────────────────────────────────────────────────────
-const TRIGGER_TIME   = 5.0    // seg en que cae todo (drop + carousel)
-const VIDEO_DURATION = 8000   // 8s por video en queue
+const TRIGGER_TIME   = 5.0
+const VIDEO_DURATION = 8000
 
 const BG_QUEUE = [video2, video3, video4, video5]
 const isMobile = () => window.innerWidth <= 768
 
-// ─── SLIDES ────────────────────────────────────────────────────────────────────
-// slide 0 es login — siempre el punto de partida
 export const SLIDES = [
   { id: 0, isLogin: true },
-  {
-    id: 1,
-    title: 'Quiénes Somos',
-    subtitle: 'Una visión, un propósito',
-    body: 'Somos un equipo de mentes inquietas que decidió transformar ideas en experiencias. Fundados sobre la convicción de que la tecnología debe emocionar tanto como funcionar, construimos cada proyecto como si fuera el último.',
-  },
-  {
-    id: 2,
-    title: 'Nuestra Misión',
-    subtitle: 'El norte que nos guía',
-    body: 'Democratizar el acceso a soluciones de alto impacto. No creemos en el software genérico ni en los clientes invisibles. Cada desafío es único, y nuestra misión es tratarlo como tal: con rigor, creatividad y obsesión por el detalle.',
-  },
-  {
-    id: 3,
-    title: 'Nuestros Servicios',
-    subtitle: 'Lo que hacemos, y cómo lo hacemos',
-    body: 'Desarrollo de producto, diseño de experiencias, arquitectura de sistemas y estrategia digital. No ofrecemos servicios sueltos: ofrecemos transformación completa, desde la primera idea hasta el último píxel en producción.',
-  },
-  {
-    id: 4,
-    title: 'Contacto',
-    subtitle: 'Empecemos a construir juntos',
-    body: 'Cada gran proyecto comienza con una conversación. Escribinos, contanos tu idea sin filtros, y nosotros te decimos cómo hacerla realidad. No hay visión demasiado grande ni proyecto demasiado ambicioso.',
-  },
+  { id: 1, title: 'Quiénes Somos',       subtitle: 'Una visión, un propósito',          body: 'Somos un equipo de mentes inquietas que decidió transformar ideas en experiencias. Fundados sobre la convicción de que la tecnología debe emocionar tanto como funcionar, construimos cada proyecto como si fuera el último.' },
+  { id: 2, title: 'Nuestra Misión',       subtitle: 'El norte que nos guía',             body: 'Democratizar el acceso a soluciones de alto impacto. No creemos en el software genérico ni en los clientes invisibles. Cada desafío es único, y nuestra misión es tratarlo como tal: con rigor, creatividad y obsesión por el detalle.' },
+  { id: 3, title: 'Nuestros Servicios',   subtitle: 'Lo que hacemos, y cómo lo hacemos', body: 'Desarrollo de producto, diseño de experiencias, arquitectura de sistemas y estrategia digital. No ofrecemos servicios sueltos: ofrecemos transformación completa, desde la primera idea hasta el último píxel en producción.' },
+  { id: 4, title: 'Contacto',             subtitle: 'Empecemos a construir juntos',      body: 'Cada gran proyecto comienza con una conversación. Escribinos, contanos tu idea sin filtros, y nosotros te decimos cómo hacerla realidad. No hay visión demasiado grande ni proyecto demasiado ambicioso.' },
 ]
 
 export default function App() {
@@ -65,18 +42,19 @@ export default function App() {
   const [videoBlurred,    setVideoBlurred]     = useState(false)
   const [videoSrc,        setVideoSrc]         = useState('')
   const [activeEl,        setActiveEl]         = useState('A')
-
-  // ── Carousel ──────────────────────────────────────────────────────────────
   const [showCarousel,    setShowCarousel]     = useState(false)
+
+  const loginKeyRef      = useRef(0)
   const [currentSlide,    setCurrentSlide]     = useState(0)
   const [isTransitioning, setIsTransitioning]  = useState(false)
-  const [slideDirection,  setSlideDirection]   = useState(null) // 'left' | 'right' | null
+  const [slideDirection,  setSlideDirection]   = useState(null)
+  // enterFrom es el lado OPUESTO a slideDirection (desde donde entra el nuevo slide)
+  const [enterFrom,       setEnterFrom]        = useState(null)
 
   useEffect(() => {
     setVideoSrc(isMobile() ? introMobile : introVideo)
   }, [])
 
-  // ─── Fade de volumen ────────────────────────────────────────────────────────
   const fadeVolume = (el, from, to, durationMs) => {
     const steps    = 60
     const interval = durationMs / steps
@@ -101,7 +79,6 @@ export default function App() {
     if (videoARef.current && videoSrc) videoARef.current.load()
   }, [videoSrc])
 
-  // ─── Crossfade de videos ────────────────────────────────────────────────────
   const crossfadeToSrc = useCallback((newSrc) => {
     if (!newSrc) return
     const isA      = activeVideo.current === 'A'
@@ -114,7 +91,6 @@ export default function App() {
     setActiveEl(activeVideo.current)
   }, [])
 
-  // ─── Video queue ────────────────────────────────────────────────────────────
   const playNextInQueue = useCallback(() => {
     const src = BG_QUEUE[queueIndex.current % BG_QUEUE.length]
     crossfadeToSrc(src)
@@ -135,7 +111,6 @@ export default function App() {
 
   useEffect(() => () => stopVideoQueue(), [stopVideoQueue])
 
-  // ─── Intro enter ────────────────────────────────────────────────────────────
   const handleEnter = () => {
     setStarted(true)
     const video = videoARef.current
@@ -155,7 +130,6 @@ export default function App() {
     }
   }
 
-  // ─── Trigger en seg 5 ───────────────────────────────────────────────────────
   const handleTimeUpdate = () => {
     if (hasTriggered.current) return
     const t = videoARef.current?.currentTime ?? 0
@@ -169,20 +143,13 @@ export default function App() {
     clearAllFades()
     const video = videoARef.current
     const audio = audioRef.current
-
-    // 🎵 Drop musical
     if (video) fadeVolume(video, video.volume, 0.12, 600)
     if (audio) fadeVolume(audio, audio.volume, 0.65, 800)
-
-    // ✅ Todo de golpe en seg 5
     setVideoBlurred(true)
-    setShowCarousel(true)   // activa carousel — LoginForm ve visible=true y dispara GSAP
+    setShowCarousel(true)
     startVideoQueue()
   }
 
-  // ─── Navegación circular ────────────────────────────────────────────────────
-  // direction: 'left' | 'right'
-  // right → avanza (slide +1), left → retrocede (slide -1)
   const navigateTo = useCallback((direction) => {
     if (isTransitioning || !showCarousel) return
 
@@ -191,16 +158,21 @@ export default function App() {
       ? (currentSlide + 1) % total
       : (currentSlide - 1 + total) % total
 
-    setIsTransitioning(true)
-    setSlideDirection(direction)   // le dice al slide actual en qué dirección salir
+    // El nuevo slide entra desde el lado OPUESTO a la dirección de navegación
+    const newEnterFrom = direction === 'right' ? 'right' : 'left'
 
-    // Cambia el slide cuando termina la salida (~350ms)
+    setIsTransitioning(true)
+    setSlideDirection(direction)  // el slide actual sale hacia este lado
+    setEnterFrom(null)            // limpiamos mientras dura la salida
+
     setTimeout(() => {
+      // Si volvemos al login, incrementamos la key para forzar remount limpio
+      if (next === 0) loginKeyRef.current++
       setCurrentSlide(next)
-      setSlideDirection(null)      // nueva card entra desde el lado opuesto
+      setSlideDirection(null)
+      setEnterFrom(newEnterFrom)  // ahora le decimos al nuevo slide desde dónde entra
     }, 350)
 
-    // Libera el lock cuando termina la entrada (~700ms total)
     setTimeout(() => setIsTransitioning(false), 700)
   }, [isTransitioning, showCarousel, currentSlide])
 
@@ -208,8 +180,6 @@ export default function App() {
 
   return (
     <div className="scene">
-
-      {/* ── Videos background ── */}
       <video
         ref={videoARef}
         className={`bg-video ${videoBlurred ? 'blurred' : ''} ${activeEl === 'A' ? 'vid-active' : 'vid-inactive'}`}
@@ -230,31 +200,22 @@ export default function App() {
       <audio ref={audioRef} src={ambientAudio} loop preload="auto" />
       <div className="scene-overlay" />
 
-      {/* ── Carousel: LoginForm o SlideCard ── */}
       {showCarousel && (
         <>
           {currentSlideData.isLogin ? (
-            /*
-             * visible=true dispara la animación GSAP de caída en LoginForm.
-             * exiting / exitDirection controlan la salida lateral.
-             */
             <LoginForm
-              visible={showCarousel}
+              key={loginKeyRef.current}
+              visible={true}
               exiting={isTransitioning}
               exitDirection={slideDirection}
             />
           ) : (
-            /*
-             * key={currentSlide} → fuerza desmount/mount en cada cambio,
-             * así GSAP siempre corre la entrada desde cero.
-             * enterFrom → desde qué lado entra el nuevo slide.
-             */
             <SlideCard
               key={currentSlide}
               slide={currentSlideData}
               exiting={isTransitioning}
               exitDirection={slideDirection}
-              enterFrom={slideDirection}
+              enterFrom={enterFrom}
             />
           )}
 
@@ -268,7 +229,6 @@ export default function App() {
         </>
       )}
 
-      {/* ── Pantalla de intro (tapa todo hasta que hacen click) ── */}
       {!started && <IntroScreen onEnter={handleEnter} />}
     </div>
   )

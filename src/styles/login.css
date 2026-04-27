@@ -273,13 +273,166 @@
   z-index: 15 !important; /* Sobre slide-card */
   pointer-events: auto;
 }
-/* ── Login overlay (para slide 0) ── */
-.login-overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 15 !important;
+
+/* ── FIX: Login card motion (GSAP target) ── */
+.login-card-motion {
+  position: relative;
+  opacity: 1;
+  transform: none;
+}
+
+/* ── FIX: Slide wrapper ── */
+.slide-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* ── FIX: Slide card ── */
+.slide-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 48px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--gold-border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  text-align: center;
+  position: relative;
+  opacity: 1;
+  transform: none;
+}
+
+.slide-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.slide-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.slide-body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+/* ═══════════════════════════════════════════════════════════════
+   ARROWS + FILMSTRIP
+   ═══════════════════════════════════════════════════════════════ */
+
+.arrow-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%) translateX(0);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(240, 230, 204, 0.45);
+  padding: 12px;
+  z-index: 20;
+  opacity: 0;
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+
+.arrow-btn--visible {
+  opacity: 1;
   pointer-events: auto;
+}
+
+.arrow-btn--disabled {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.arrow-btn--left  { left: 28px; }
+.arrow-btn--right { right: 28px; }
+
+.arrow-btn:hover {
+  color: rgba(201, 168, 76, 0.9);
+}
+
+.arrow-btn:hover.arrow-btn--left  { transform: translateY(-50%) translateX(-3px); }
+.arrow-btn:hover.arrow-btn--right { transform: translateY(-50%) translateX(3px); }
+
+.arrow-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carousel-arrow-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.arrow-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.3s ease, opacity 0.3s ease;
+}
+
+.arrow-btn:hover .arrow-label {
+  max-width: 160px;
+  opacity: 1;
+}
+
+/* ── Filmstrip ── */
+.filmstrip {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 20;
+}
+
+.filmstrip-bar {
+  width: 24px;
+  height: 2px;
+  background: rgba(240, 230, 204, 0.25);
+  border-radius: 1px;
+  transition: background 0.4s ease, width 0.4s ease;
+}
+
+.filmstrip-bar.active {
+  background: rgba(201, 168, 76, 0.8);
+  width: 36px;
+}
+
+/* ── Mobile arrows ── */
+@media (max-width: 768px) {
+  .arrow-btn--left  { left: 10px; }
+  .arrow-btn--right { right: 10px; }
+  .arrow-label      { display: none; }
+  .carousel-arrow-icon { width: 26px; height: 26px; }
 }
