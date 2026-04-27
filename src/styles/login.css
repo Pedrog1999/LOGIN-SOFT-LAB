@@ -241,6 +241,39 @@
   transform: translateY(1px);
 }
 
+.login-github {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.github-link svg {
+  display: block;
+  color: var(--gold);
+}
+
+.github-link:hover {
+  color: var(--gold-light);
+  transform: translateY(-1px);
+}
+
+.github-link:hover svg {
+  color: var(--gold-light);
+}
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
   .login-card {
