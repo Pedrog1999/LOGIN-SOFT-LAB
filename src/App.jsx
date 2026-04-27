@@ -176,6 +176,7 @@ export default function App() {
     setTimeout(() => setIsTransitioning(false), 700)
   }, [isTransitioning, showCarousel, currentSlide])
 
+  const isSlideExiting = isTransitioning && enterFrom === null
   const currentSlideData = SLIDES[currentSlide]
 
   return (
@@ -206,14 +207,14 @@ export default function App() {
             <LoginForm
               key={loginKeyRef.current}
               visible={true}
-              exiting={isTransitioning}
+              exiting={isSlideExiting}
               exitDirection={slideDirection}
             />
           ) : (
             <SlideCard
               key={currentSlide}
               slide={currentSlideData}
-              exiting={isTransitioning}
+              exiting={isSlideExiting}
               exitDirection={slideDirection}
               enterFrom={enterFrom}
             />
