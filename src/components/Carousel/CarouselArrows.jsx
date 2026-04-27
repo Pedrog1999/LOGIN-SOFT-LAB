@@ -41,17 +41,11 @@ function Arrow({ direction, onClick, label, disabled, visible }) {
 
 function ArrowSVG({ direction }) {
   return (
-    <svg className="carousel-arrow-icon" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className="carousel-arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       {direction === 'left' ? (
-        <>
-          <line x1="38" y1="6" x2="2" y2="6" stroke="currentColor" strokeWidth="0.8"/>
-          <polyline points="10,1 2,6 10,11" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </>
+        <path d="M16 5L8.5 12L16 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       ) : (
-        <>
-          <line x1="2" y1="6" x2="38" y2="6" stroke="currentColor" strokeWidth="0.8"/>
-          <polyline points="30,1 38,6 30,11" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </>
+        <path d="M8 5L15.5 12L8 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       )}
     </svg>
   )

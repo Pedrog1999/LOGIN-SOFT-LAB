@@ -41,8 +41,8 @@
 
 /* ── Card glassmorphism ── */
 .login-card {
-  width: 100%;
-  max-width: 400px;
+  width: clamp(350px, 100vw, 400px);
+  max-width: 680px;
   padding: 48px 44px 44px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);

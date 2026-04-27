@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
-import LoginForm     from './components/LoginForm'
-import IntroScreen   from './components/IntroScreen'
-import SlideCard     from './components/SlideCard'
-import CarouselArrows from './components/CarouselArrows'
+import LoginForm     from './components/Login/LoginForm'
+import IntroScreen   from './components/Intro/IntroScreen'
+import SlideCard     from './components/Carousel/SlideCard'
+import CarouselArrows from './components/Carousel/CarouselArrows'
 
 import introVideo   from './assets/intro.mp4'
 import introMobile  from './assets/intromobile.mp4'
@@ -79,14 +79,23 @@ export default function App() {
     if (videoARef.current && videoSrc) videoARef.current.load()
   }, [videoSrc])
 
-  const crossfadeToSrc = useCallback((newSrc) => {
+const crossfadeToSrc = useCallback((newSrc) => {
     if (!newSrc) return
-    const isA      = activeVideo.current === 'A'
+    const isA = activeVideo.current === 'A'
     const incoming = isA ? videoBRef.current : videoARef.current
+    
     if (!incoming) return
+    
     incoming.src = newSrc
     incoming.load()
+    
+    // AQUÍ ESTÁ EL TRUCO: 
+    // Forzamos el volumen bajo apenas carga, antes de darle play.
+    // Usamos 0.06 que es el valor de "volumen bajito" que definimos.
+    incoming.volume = 0.25 
+    
     incoming.play().catch(() => {})
+    
     activeVideo.current = isA ? 'B' : 'A'
     setActiveEl(activeVideo.current)
   }, [])
@@ -111,17 +120,23 @@ export default function App() {
 
   useEffect(() => () => stopVideoQueue(), [stopVideoQueue])
 
-  const handleEnter = () => {
+const handleEnter = () => {
     setStarted(true)
     const video = videoARef.current
     const audio = audioRef.current
+
     if (video) {
-      video.muted  = false
+      video.muted = false
       video.volume = 0
       video.play()
+      
+      // 1. Fade inicial
       fadeVolume(video, 0, 0.45, 800)
+      
+      // 2. Estabilización al segundo 5
       setTimeout(() => fadeVolume(video, 0.45, 0.22, 4200), 800)
     }
+
     if (audio) {
       audio.volume = 0
       audio.play().catch(() => {})
@@ -139,12 +154,21 @@ export default function App() {
     }
   }
 
-  const triggerMainSequence = () => {
+const triggerMainSequence = () => {
     clearAllFades()
     const video = videoARef.current
     const audio = audioRef.current
+
+    // 1. Bajada inicial al segundo 5 (a 0.12)
     if (video) fadeVolume(video, video.volume, 0.12, 600)
     if (audio) fadeVolume(audio, audio.volume, 0.65, 800)
+    
+    // 2. NUEVO: Ducking al segundo 6 (1000ms después de que empiece esto)
+    // Bajamos el video a 0.06 (la mitad de 0.12)
+    setTimeout(() => {
+      if (video) fadeVolume(video, 0.12, 0.06, 1000)
+    }, 1000)
+
     setVideoBlurred(true)
     setShowCarousel(true)
     startVideoQueue()

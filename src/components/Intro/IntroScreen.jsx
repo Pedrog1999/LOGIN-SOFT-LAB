@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import '../styles/intro.css'
+import '../../styles/intro.css'
 
 export default function IntroScreen({ onEnter }) {
   const sceneRef = useRef(null)
