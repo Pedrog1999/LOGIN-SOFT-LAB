@@ -31,3 +31,7 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
+
+.scene-overlay {
+  pointer-events: none;
+}

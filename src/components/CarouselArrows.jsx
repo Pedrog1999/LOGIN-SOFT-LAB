@@ -14,24 +14,12 @@ function FilmStrip({ current, total }) {
 }
 
 function Arrow({ direction, onClick, label, disabled, visible }) {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    if (!ref.current || !visible) return
-    gsap.fromTo(
-      ref.current,
-      { opacity: 0, x: direction === 'left' ? -16 : 16 },
-      { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: 0.15 }
-    )
-  }, [visible])
-
   return (
     <button
-      ref={ref}
-      className={`arrow-btn arrow-btn--${direction} ${disabled ? 'arrow-btn--disabled' : ''}`}
+      className={`arrow-btn arrow-btn--${direction} ${disabled ? 'arrow-btn--disabled' : ''} ${visible ? 'arrow-btn--visible' : ''}`}
       onClick={disabled ? undefined : onClick}
       aria-label={label}
-      style={{ opacity: 0 }}
+      style={{ opacity: 1, transform: 'translateX(0)' }}
     >
       <div className="arrow-inner">
         {direction === 'left' && (
@@ -73,7 +61,7 @@ export default function CarouselArrows({ onLeft, onRight, currentSlide, totalSli
   const [visible, setVisible] = React.useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 200)
+    const t = setTimeout(() => setVisible(true), 0)
     return () => clearTimeout(t)
   }, [])
 

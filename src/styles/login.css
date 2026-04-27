@@ -10,6 +10,7 @@
   height: 100% !important;
   object-fit: cover !important;
   z-index: 0 !important;
+  pointer-events: none !important;
   transition:
     filter 2.5s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -35,6 +36,7 @@
   align-items: center !important;
   justify-content: center !important;
   z-index: 10 !important;
+  pointer-events: auto !important;
 }
 
 /* ── Card glassmorphism ── */
@@ -274,11 +276,32 @@
   pointer-events: auto;
 }
 
-/* ── FIX: Login card motion (GSAP target) ── */
+/* ── Login card motion (CSS enter/exit) ── */
 .login-card-motion {
   position: relative;
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: translateY(-120px) scale(0.88);
+  animation: login-enter 0.75s ease forwards;
+  pointer-events: auto;
+}
+
+.login-card-motion--exit-left,
+.login-card-motion--exit-right {
+  animation: none;
+  transition: transform 0.32s ease, opacity 0.32s ease;
+  opacity: 0;
+  transform: translateX(130px) scale(0.92);
+}
+
+.login-card-motion--exit-right {
+  transform: translateX(-130px) scale(0.92);
+}
+
+@keyframes login-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* ── FIX: Slide wrapper ── */
