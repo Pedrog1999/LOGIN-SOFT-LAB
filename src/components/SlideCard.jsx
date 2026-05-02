@@ -1,49 +1,51 @@
 import React, { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 
+// enterFrom: 'left' | 'right' | null
+// Si navigateTo('right') → currentSlide avanza → nuevo slide entra desde la DERECHA
+// Si navigateTo('left')  → currentSlide retrocede → nuevo slide entra desde la IZQUIERDA
 export default function SlideCard({ slide, exiting, exitDirection, enterFrom }) {
   const cardRef = useRef(null)
 
-  // ── ENTRADA al montar ──────────────────────────────────────────────────────
+  // ── ENTRADA al montar (key={currentSlide} garantiza nuevo mount por slide) ──
   useEffect(() => {
     if (!cardRef.current) return
 
-    // Si no hay enterFrom (primera carga), entra desde abajo suavemente
-    const xFrom = enterFrom === 'right' ? 140 : enterFrom === 'left' ? -140 : 0
-    const yFrom = enterFrom ? 0 : 30
+    const xFrom = enterFrom === 'right' ? 120 : enterFrom === 'left' ? -120 : 0
 
     gsap.killTweensOf(cardRef.current)
     gsap.fromTo(
       cardRef.current,
-      { x: xFrom, y: yFrom, opacity: 0, scale: 0.93 },
-      { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.42, ease: 'power3.out' }
+      { x: xFrom, opacity: 0, scale: 0.94, filter: 'blur(3px)' },
+      { x: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.42, ease: 'power3.out' }
     )
 
+    // Stagger del contenido
     const children = cardRef.current.querySelectorAll('.slide-title, .slide-subtitle, .slide-body')
     if (children.length) {
       gsap.fromTo(
         children,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.35, stagger: 0.07, ease: 'power2.out', delay: 0.1 }
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.35, stagger: 0.08, ease: 'power2.out', delay: 0.12 }
       )
     }
 
     return () => gsap.killTweensOf(cardRef.current)
-  }, []) // solo en mount — la key={currentSlide} garantiza un mount por slide
+  }, [enterFrom])  // solo en mount
 
   // ── SALIDA lateral ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!exiting || !cardRef.current) return
-    // El slide actual sale hacia el lado opuesto a la dirección de navegación
-    const xTarget = exitDirection === 'right' ? -140 : 140
+    const xTarget = exitDirection === 'right' ? -120 : 120
     gsap.killTweensOf(cardRef.current)
     gsap.to(cardRef.current, {
       x: xTarget,
       opacity: 0,
-      scale: 0.92,
+      scale: 0.94,
       duration: 0.32,
       ease: 'power2.in',
     })
+    
   }, [exiting, exitDirection])
 
   if (!slide || slide.isLogin) return null
